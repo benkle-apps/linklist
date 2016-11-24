@@ -1,0 +1,9 @@
+services:
+  app.url_manager:
+    class: AppBundle\Service\UrlManager
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@app.url_parser"
+
+  app.url_parser:
+    class: League\Uri\UriParser

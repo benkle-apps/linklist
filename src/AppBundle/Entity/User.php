@@ -10,7 +10,7 @@ use FOS\UserBundle\Model\User as AbstractUser;
  *
  * @package AppBundle\Entity
  * @ORM\Entity()
- * @ORM\Table(name="user")
+ * @ORM\Table(name="users")
  */
 class User extends AbstractUser
 {
