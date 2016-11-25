@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Url;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\QueryBuilder;
 use League\Uri\Components\Host;
 use League\Uri\UriParser;
 
@@ -37,7 +38,8 @@ class UrlManager
         $urlEntity = new Url($user);
         $parsed    = $this->parser->parse($url);
         $host      = new Host($parsed['host']);
-        $urlEntity->setDomain($host->getRegisterableDomain() ?: 'local')->setUrl($url);
+        $urlEntity->setDomain($host->getRegisterableDomain() ?: 'local')
+                  ->setUrl($url);
         $this->manager->persist($urlEntity);
     }
 
@@ -49,9 +51,17 @@ class UrlManager
     public function getDomains(User $user)
     {
         $q =
-            $this->getReposity()->createQueryBuilder('d')->select('d.domain')->addSelect('count(d.id) as c')->where(
-                    'd.user = :user'
-                )->setParameter('user', $user)->groupBy('d.domain')->orderBy('c', 'DESC')->getQuery();
+            $this->getReposity()
+                 ->createQueryBuilder('d')
+                 ->select('d.domain')
+                 ->addSelect('count(d.id) as c')
+                 ->where(
+                     'd.user = :user'
+                 )
+                 ->setParameter('user', $user)
+                 ->groupBy('d.domain')
+                 ->orderBy('c', 'DESC')
+                 ->getQuery();
 
         return $q->getArrayResult();
     }
@@ -89,12 +99,34 @@ class UrlManager
     {
         $qBuilder =
             $this->getReposity()
-                ->createQueryBuilder('d')
-                ->where('d.user = :user')
-                ->setParameter('user', $user)
-                ->orderBy('d.added');
+                 ->createQueryBuilder('d')
+                 ->where('d.user = :user')
+                 ->setParameter('user', $user)
+                 ->orderBy('d.added', 'ASC');
+
+        $this->buildGetQuery($qBuilder, $options);
+
+        if ($options->limit > 0) {
+            $qBuilder->setMaxResults($options->limit);
+        }
+
+        if ($options->offset > 0) {
+            $qBuilder->setFirstResult($options->offset);
+        }
+
+        return $qBuilder->getQuery()
+                        ->getResult();
+    }
+
+    /**
+     * @param QueryBuilder   $qBuilder
+     * @param GetUrlsOptions $options
+     */
+    private function buildGetQuery(QueryBuilder $qBuilder, GetUrlsOptions $options)
+    {
         if (isset($options->domain)) {
-            $qBuilder->andWhere('d.domain = :domain')->setParameter('domain', $options->domain);
+            $qBuilder->andWhere('d.domain = :domain')
+                     ->setParameter('domain', $options->domain);
         }
 
         switch ($options->gone) {
@@ -114,16 +146,29 @@ class UrlManager
                 $qBuilder->andWhere('d.visited is not null');
                 break;
         }
+    }
 
-        if ($options->limit > 0) {
-            $qBuilder->setMaxResults($options->limit);
-        }
+    /**
+     * @param User           $user
+     * @param GetUrlsOptions $options
+     *
+     * @return int
+     */
+    public function countUrls(User $user, GetUrlsOptions $options)
+    {
+        $qBuilder =
+            $this->getReposity()
+                 ->createQueryBuilder('d')
+                 ->select('count(d.id)')
+                 ->where('d.user = :user')
+                 ->setParameter('user', $user)
+                 ->orderBy('d.added', 'ASC');
 
-        if ($options->offset > 0) {
-            $qBuilder->setFirstResult($options->offset);
-        }
+        $this->buildGetQuery($qBuilder, $options);
 
-        return $qBuilder->getQuery()->getResult();
+        $result = $qBuilder->getQuery()
+                        ->getScalarResult();
+        return reset($result);
     }
 
     /**
