@@ -125,10 +125,6 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
                                       ->getMock()
                              )
                          );
-        $queryBuilderMock->expects($this->atLeastOnce())
-                         ->method('setParameter')
-                         ->with('user', $userMock)
-                         ->will($this->returnSelf());
         $queryBuilderMock->expects($this->any())
                          ->method($this->anything())
                          ->will($this->returnSelf());
@@ -541,6 +537,104 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
         $urlManager       = new UrlManager($managerMock, $uriParser);
         $options          = new GetUrlsOptions();
         $options->visited = GetUrlsOptions::VISITED_NOT;
+        $urlManager->getUrls($userMock, $options);
+    }
+
+    public function testGetUrlOrderByAdded()
+    {
+        $userMock         =
+            $this->getMockBuilder(User::class)
+                 ->getMock();
+        $uriParser        =
+            $this->getMockBuilder(UriParser::class)
+                 ->getMock();
+        $queryBuilderMock =
+            $this->getMockBuilder(QueryBuilder::class)
+                 ->disableOriginalConstructor()
+                 ->getMock();
+        $queryBuilderMock->expects($this->atLeastOnce())
+                         ->method('orderBy')
+                         ->with('d.added', 'ASC')
+                         ->will($this->returnSelf());
+        $queryBuilderMock->expects($this->atLeastOnce())
+                         ->method('getQuery')
+                         ->will(
+                             $this->returnValue(
+                                 $this->getMockBuilder(AbstractQuery::class)
+                                      ->disableOriginalConstructor()
+                                      ->getMock()
+                             )
+                         );
+        $queryBuilderMock->expects($this->any())
+                         ->method($this->anything())
+                         ->will($this->returnSelf());
+        $repoMock =
+            $this->getMockBuilder(EntityRepository::class)
+                 ->disableOriginalConstructor()
+                 ->getMock();
+        $repoMock->expects($this->once())
+                 ->method('createQueryBuilder')
+                 ->will($this->returnValue($queryBuilderMock));
+        $managerMock =
+            $this->getMockBuilder(EntityManager::class)
+                 ->disableOriginalConstructor()
+                 ->getMock();
+        $managerMock->expects($this->once())
+                    ->method('getRepository')
+                    ->with('AppBundle:Url')
+                    ->will($this->returnValue($repoMock));
+
+        $urlManager = new UrlManager($managerMock, $uriParser);
+        $urlManager->getUrls($userMock, new GetUrlsOptions());
+    }
+
+    public function testGetUrlOrderByVisited()
+    {
+        $userMock         =
+            $this->getMockBuilder(User::class)
+                 ->getMock();
+        $uriParser        =
+            $this->getMockBuilder(UriParser::class)
+                 ->getMock();
+        $queryBuilderMock =
+            $this->getMockBuilder(QueryBuilder::class)
+                 ->disableOriginalConstructor()
+                 ->getMock();
+        $queryBuilderMock->expects($this->atLeastOnce())
+                         ->method('orderBy')
+                         ->with('d.visited', 'ASC')
+                         ->will($this->returnSelf());
+        $queryBuilderMock->expects($this->atLeastOnce())
+                         ->method('getQuery')
+                         ->will(
+                             $this->returnValue(
+                                 $this->getMockBuilder(AbstractQuery::class)
+                                      ->disableOriginalConstructor()
+                                      ->getMock()
+                             )
+                         );
+        $queryBuilderMock->expects($this->any())
+                         ->method($this->anything())
+                         ->will($this->returnSelf());
+        $repoMock =
+            $this->getMockBuilder(EntityRepository::class)
+                 ->disableOriginalConstructor()
+                 ->getMock();
+        $repoMock->expects($this->once())
+                 ->method('createQueryBuilder')
+                 ->will($this->returnValue($queryBuilderMock));
+        $managerMock =
+            $this->getMockBuilder(EntityManager::class)
+                 ->disableOriginalConstructor()
+                 ->getMock();
+        $managerMock->expects($this->once())
+                    ->method('getRepository')
+                    ->with('AppBundle:Url')
+                    ->will($this->returnValue($repoMock));
+
+        $urlManager = new UrlManager($managerMock, $uriParser);
+        $options = new GetUrlsOptions();
+        $options->order = GetUrlsOptions::ORDER_BY_VISITED;
         $urlManager->getUrls($userMock, $options);
     }
 

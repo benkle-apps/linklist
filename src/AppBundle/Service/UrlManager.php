@@ -101,8 +101,7 @@ class UrlManager
             $this->getReposity()
                  ->createQueryBuilder('d')
                  ->where('d.user = :user')
-                 ->setParameter('user', $user)
-                 ->orderBy('d.added', 'ASC');
+                 ->setParameter('user', $user);
 
         $this->buildGetQuery($qBuilder, $options);
 
@@ -112,6 +111,17 @@ class UrlManager
 
         if ($options->offset > 0) {
             $qBuilder->setFirstResult($options->offset);
+        }
+
+        $orderDirection = $options->orderDirection == GetUrlsOptions::ORDER_UP ? 'ASC' : 'DESC';
+
+        switch ($options->order) {
+            case GetUrlsOptions::ORDER_BY_ADDED:
+                $qBuilder->orderBy('d.added', $orderDirection);
+                break;
+            case GetUrlsOptions::ORDER_BY_VISITED:
+                $qBuilder->orderBy('d.visited', $orderDirection);
+                break;
         }
 
         return $qBuilder->getQuery()
@@ -142,7 +152,7 @@ class UrlManager
             case GetUrlsOptions::VISITED_NOT:
                 $qBuilder->andWhere('d.visited is null');
                 break;
-            case GetUrlsOptions::GONE_ONLY:
+            case GetUrlsOptions::VISITED_ONLY:
                 $qBuilder->andWhere('d.visited is not null');
                 break;
         }
@@ -161,8 +171,7 @@ class UrlManager
                  ->createQueryBuilder('d')
                  ->select('count(d.id)')
                  ->where('d.user = :user')
-                 ->setParameter('user', $user)
-                 ->orderBy('d.added', 'ASC');
+                 ->setParameter('user', $user);
 
         $this->buildGetQuery($qBuilder, $options);
 
