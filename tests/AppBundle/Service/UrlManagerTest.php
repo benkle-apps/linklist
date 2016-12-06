@@ -14,9 +14,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 {
     public function testAddUrlWithInstance()
     {
-        $userMock    =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser   =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -35,9 +33,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
     public function testAddUrlValueSetting()
     {
         $that      = $this;
-        $userMock  =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -69,9 +65,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
     public function testAddUrlFileUrl()
     {
         $that      = $this;
-        $userMock  =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -102,9 +96,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrl()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -150,9 +142,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithLimit()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -203,9 +193,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithOffset()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -256,9 +244,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithDomain()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -309,9 +295,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithGoneOnly()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -367,9 +351,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithGoneNot()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -425,9 +407,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithVisitedOnly()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -483,9 +463,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlWithVisitedNot()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -542,9 +520,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlOrderByAdded()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -590,9 +566,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlOrderByVisited()
     {
-        $userMock         =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser        =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -641,9 +615,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetUrlsSimple()
     {
         $that     = $this;
-        $userMock =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
 
         $urlManager =
             $this->getMockBuilder(UrlManager::class)
@@ -670,9 +642,7 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCountUrl()
     {
-        $userMock  =
-            $this->getMockBuilder(User::class)
-                 ->getMock();
+        $userMock    = $this->getUserMock('user');
         $uriParser =
             $this->getMockBuilder(UriParser::class)
                  ->getMock();
@@ -722,5 +692,23 @@ class UrlManagerTest extends \PHPUnit_Framework_TestCase
         $urlManager = new UrlManager($managerMock, $uriParser);
         $c          = $urlManager->countUrls($userMock, new GetUrlsOptions());
         $this->assertEquals(1, $c);
+    }
+
+    /**
+     * @param string|null $id
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getUserMock($id)
+    {
+        $userMock =
+            $this->getMockBuilder(User::class)
+                 ->getMock();
+
+        $userMock
+            ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id));
+
+        return $userMock;
     }
 }
