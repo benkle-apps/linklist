@@ -6,11 +6,11 @@ class GetUrlsOptions
 {
     const GONE_ONLY = 1;
     const GONE_NOT = 2;
-    const GONE_BOTH = 3;
+    const GONE_BOTH = 0;
 
     const VISITED_ONLY = 4;
     const VISITED_NOT = 8;
-    const VISITED_BOTH = 12;
+    const VISITED_BOTH = 0;
 
     const ORDER_UP = 1;
     const ORDER_DOWN = -1;

@@ -5,7 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Url;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\QueryBuilder;
 use League\Uri\Components\Host;
 use League\Uri\UriParser;
 
@@ -97,65 +96,17 @@ class UrlManager
      */
     public function getUrls(User $user, GetUrlsOptions $options)
     {
-        $qBuilder =
-            $this->getReposity()
-                 ->createQueryBuilder('d')
-                 ->where('d.user = :user')
-                 ->setParameter('user', $user);
+        $query = new UrlQuery($this->getReposity());
+        $query->setUser($user->getId() !== null ? $user : null)
+              ->setDomain($options->domain)
+              ->setVisitedHandling($options->visited)
+              ->setGoneHandling($options->gone)
+              ->setLimit($options->limit)
+              ->setOffset($options->offset)
+              ->setOrderBy($options->order)
+              ->setOrderDirection($options->orderDirection);
 
-        $this->buildGetQuery($qBuilder, $options);
-
-        if ($options->limit > 0) {
-            $qBuilder->setMaxResults($options->limit);
-        }
-
-        if ($options->offset > 0) {
-            $qBuilder->setFirstResult($options->offset);
-        }
-
-        $orderDirection = $options->orderDirection == GetUrlsOptions::ORDER_UP ? 'ASC' : 'DESC';
-
-        switch ($options->order) {
-            case GetUrlsOptions::ORDER_BY_ADDED:
-                $qBuilder->orderBy('d.added', $orderDirection);
-                break;
-            case GetUrlsOptions::ORDER_BY_VISITED:
-                $qBuilder->orderBy('d.visited', $orderDirection);
-                break;
-        }
-
-        return $qBuilder->getQuery()
-                        ->getResult();
-    }
-
-    /**
-     * @param QueryBuilder   $qBuilder
-     * @param GetUrlsOptions $options
-     */
-    private function buildGetQuery(QueryBuilder $qBuilder, GetUrlsOptions $options)
-    {
-        if (isset($options->domain)) {
-            $qBuilder->andWhere('d.domain = :domain')
-                     ->setParameter('domain', $options->domain);
-        }
-
-        switch ($options->gone) {
-            case GetUrlsOptions::GONE_NOT:
-                $qBuilder->andWhere('d.gone = false');
-                break;
-            case GetUrlsOptions::GONE_ONLY:
-                $qBuilder->andWhere('d.gone = true');
-                break;
-        }
-
-        switch ($options->visited) {
-            case GetUrlsOptions::VISITED_NOT:
-                $qBuilder->andWhere('d.visited is null');
-                break;
-            case GetUrlsOptions::VISITED_ONLY:
-                $qBuilder->andWhere('d.visited is not null');
-                break;
-        }
+        return $query->get();
     }
 
     /**
@@ -166,18 +117,22 @@ class UrlManager
      */
     public function countUrls(User $user, GetUrlsOptions $options)
     {
-        $qBuilder =
-            $this->getReposity()
-                 ->createQueryBuilder('d')
-                 ->select('count(d.id)')
-                 ->where('d.user = :user')
-                 ->setParameter('user', $user);
+        $query = new UrlQuery($this->getReposity());
+        $query->setUser($user->getId() !== null ? $user : null)
+              ->setDomain($options->domain)
+              ->setVisitedHandling($options->visited)
+              ->setGoneHandling($options->gone)
+              ->setLimit($options->limit)
+              ->setOffset($options->offset)
+              ->setOrderBy($options->order)
+              ->setOrderDirection($options->orderDirection);
 
-        $this->buildGetQuery($qBuilder, $options);
+        return $query->count();
+    }
 
-        $result = $qBuilder->getQuery()
-                        ->getScalarResult();
-        return reset($result);
+    public function storeUrl(Url $url)
+    {
+        $this->manager->persist($url);
     }
 
     /**
