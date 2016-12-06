@@ -29,7 +29,8 @@
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
         "friendsofsymfony/user-bundle": "^2.0@dev",
-        "league/uri": "^4.2"
+        "league/uri": "^4.2",
+        "m6web/guzzle-http-bundle": "^2.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

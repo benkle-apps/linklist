@@ -68,3 +68,10 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: AppBundle\Entity\User
+
+m6web_guzzlehttp:
+    clients:
+      default:
+          timeout: 3
+          headers:
+              X_Clacks_Overhead: "GNU Terry Pratchett"
