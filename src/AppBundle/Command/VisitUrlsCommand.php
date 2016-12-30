@@ -15,7 +15,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class VisitUrlsCommand extends ContainerAwareCommand
 {
-    private function assert($stmt, \Throwable $throwable)
+    private function assert($stmt, $throwable)
     {
         if (!$stmt) {
             throw $throwable;
