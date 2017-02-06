@@ -30,9 +30,10 @@ class ListDomainsCommand extends ContainerAwareCommand
         $user = $this->getContainer()->get('fos_user.user_provider.username')->loadUserByUsername($username);
         $domains = $this->getContainer()->get('app.url_manager')->getDomains($user);
         $table = new Table($output);
-        $table
-            ->setHeaders(['Domain', 'Count'])
-            ->setRows($domains)
-            ->render();
+        $table->setHeaders(['Domain', 'Count']);
+        foreach ($domains as $domain) {
+            $table->addRow([$domain->getName(), $domain->getCount()]);
+        }
+        $table->render();
     }
 }

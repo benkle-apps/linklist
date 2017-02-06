@@ -2,9 +2,11 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Domain;
 use AppBundle\Entity\Url;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManager;
+use FOS\UserBundle\Model\UserInterface;
 use League\Uri\Components\Host;
 use League\Uri\UriParser;
 
@@ -29,10 +31,12 @@ class UrlManager
     }
 
     /**
-     * @param User   $user
+     * Add an URL for a user.
+     *
+     * @param UserInterface   $user
      * @param string $url
      */
-    public function addUrl(User $user, $url)
+    public function addUrl(UserInterface $user, $url)
     {
         $urlEntity = new Url($user);
         $parsed    = $this->parser->parse($url);
@@ -43,11 +47,13 @@ class UrlManager
     }
 
     /**
-     * @param User $user
+     * Get the list of domains for which the user has URLs stored.
      *
-     * @return string[]
+     * @param UserInterface $user
+     *
+     * @return Domain[]
      */
-    public function getDomains(User $user)
+    public function getDomains(UserInterface $user)
     {
         $q =
             $this->getReposity()
@@ -62,7 +68,11 @@ class UrlManager
                  ->orderBy('c', 'DESC')
                  ->getQuery();
 
-        return $q->getArrayResult();
+        $result = [];
+        foreach ($q->getArrayResult() as $item) {
+            $result[] = new Domain($item['domain'], $item['c']);
+        }
+        return $result;
     }
 
     private function getReposity()
@@ -78,7 +88,7 @@ class UrlManager
      *
      * @return Url[]
      */
-    public function getUrlsSimple(User $user, $domain = null, $limit = 0, $offset = 0)
+    public function getUrlsSimple(UserInterface $user, $domain = null, $limit = 0, $offset = 0)
     {
         $options         = new GetUrlsOptions();
         $options->domain = $domain;
@@ -115,7 +125,7 @@ class UrlManager
      *
      * @return int
      */
-    public function countUrls(User $user, GetUrlsOptions $options)
+    public function countUrls(UserInterface $user, GetUrlsOptions $options)
     {
         $query = new UrlQuery($this->getReposity());
         $query->setUser($user->getId() !== null ? $user : null)
