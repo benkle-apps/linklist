@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div id="wrapper">
+    <div id="container">
+        <h1>Page {{ page }} of {{ pageCount }} (Total URLs: {{ total }})</h1>
+        <ul>
+            <li><a href="{{ path('app_list_urls', {'page': 1}) }}">All Domains</a></li>
+            {% for domain in domains %}
+                <li><a href="{{ path('app_list_urls_by_domain', {'domain': domain.name, 'page': 1}) }}">{{ domain.name }} ({{ domain.count }})</a></li>
+            {% endfor %}
+        </ul>
+        <ul>
+        {% for url in urls %}
+            <li><a target="_newtab" href="{{ url.url }}">{{ url.url }}</a></li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

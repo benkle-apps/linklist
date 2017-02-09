@@ -7,3 +7,8 @@ services:
 
   app.url_parser:
     class: League\Uri\UriParser
+
+  app.serializer:
+    class: AppBundle\Service\Serializer
+    arguments:
+      - "@serializer"

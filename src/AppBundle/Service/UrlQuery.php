@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\Url;
 use AppBundle\Entity\User;
 use Doctrine\ORM\EntityRepository;
 
@@ -209,6 +210,9 @@ class UrlQuery
         return $this;
     }
 
+    /**
+     * @return Url[]
+     */
     public function get()
     {
         return $this->createQueryBuilder()
@@ -274,6 +278,9 @@ class UrlQuery
         return $builder;
     }
 
+    /**
+     * @return int
+     */
     public function count()
     {
         $result =

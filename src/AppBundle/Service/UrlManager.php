@@ -153,4 +153,9 @@ class UrlManager
         $this->manager->flush();
     }
 
+    public function getQuery()
+    {
+        return new UrlQuery($this->getReposity());
+    }
+
 }

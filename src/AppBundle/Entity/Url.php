@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class Url
@@ -18,36 +19,42 @@ class Url
      * @ORM\Id()
      * @ORM\Column(type="bigint")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups({"display"})
      */
     private $id;
 
     /**
      * @var string
      * @ORM\Column(type="string")
+     * @Groups({"display"})
      */
     private $url;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
+     * @Groups({"display"})
      */
     private $domain;
 
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime")
+     * @Groups({"display"})
      */
     private $added;
 
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"display"})
      */
     private $visited;
 
     /**
      * @var bool
      * @ORM\Column(type="boolean")
+     * @Groups({"display"})
      */
     private $gone = false;
 

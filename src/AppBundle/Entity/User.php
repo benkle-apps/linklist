@@ -11,6 +11,12 @@ use FOS\UserBundle\Model\User as AbstractUser;
  * @package AppBundle\Entity
  * @ORM\Entity()
  * @ORM\Table(name="users")
+ * @ORM\AttributeOverrides({
+ *      @ORM\AttributeOverride(
+ *          name="salt",
+ *          column=@ORM\Column(name="salt", type="string", nullable=true)
+ *      )
+ * })
  */
 class User extends AbstractUser
 {
