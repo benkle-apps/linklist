@@ -1,20 +1,30 @@
 {% extends 'base.html.twig' %}
 
+{% block brand %}Page {{ links.page }} of {{ links.pageCount }} (Total URLs: {{ links.total }}){% endblock %}
+
 {% block body %}
-<div id="wrapper">
-    <div id="container">
-        <h1>Page {{ links.page }} of {{ links.pageCount }} (Total URLs: {{ links.total }})</h1>
-        <ul>
-            <li><a href="{{ path('app_list_urls', {'page': 1}) }}">All Domains</a></li>
-            {% for domain in links.domains %}
-                <li><a href="{{ path('app_list_urls_by_domain', {'domain': domain.name, 'page': 1}) }}">{{ domain.name }} ({{ domain.count }})</a></li>
-            {% endfor %}
-        </ul>
-        <ul>
-            {% for url in links.urls %}
-            <li><a target="_newtab" href="{{ url.url }}">{{ url.url }}</a></li>
-        {% endfor %}
-        </ul>
+    <div id="container" class="container">
+        <div class="row">
+            <div class="col-sm-3 list-group">
+                <a class="list-group-item" href="{{ path('app_list_urls', {'page': 1}) }}">All Domains</a>
+                {% for domain in links.domains %}
+                    <a data-page="{{ (loop.index / 10)|round(0, 'floor') }}" class="list-group-item" href="{{ path('app_list_urls_by_domain', {'domain': domain.name, 'page': 1}) }}">{{ domain.name }}
+                        <span class="badge">{{ domain.count }}</span></a>
+                {% endfor %}
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a type="button" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span></a>
+                        <a type="button" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
+                    </div>
+                </div>
+            </div>
+            <ul class="col-sm-9 list-group">
+                {% for url in links.urls %}
+                    <li class="list-group-item">
+                        <a target="_newtab" href="{{ url.url }}">{{ url.url }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
-</div>
 {% endblock %}
