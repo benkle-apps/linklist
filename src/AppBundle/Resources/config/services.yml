@@ -11,4 +11,4 @@ services:
   app.serializer:
     class: AppBundle\Service\Serializer
     arguments:
-      - "@serializer"
+      - "@jms_serializer.serializer"

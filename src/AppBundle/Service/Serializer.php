@@ -2,8 +2,8 @@
 
 namespace AppBundle\Service;
 
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use \Symfony\Component\Serializer\Serializer as SymfonySerializer;
+use JMS\Serializer\SerializationContext;
+use JMS\Serializer\Serializer as SymfonySerializer;
 
 class Serializer
 {
@@ -13,7 +13,7 @@ class Serializer
     /**
      * Serializer constructor.
      *
-     * @param Serializer $serializer
+     * @param SymfonySerializer $serializer
      */
     public function __construct(SymfonySerializer $serializer)
     {
@@ -22,13 +22,9 @@ class Serializer
 
     public function json($data, $groups = [])
     {
-        /*$classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
-        $encoders             = [new XmlEncoder(), new JsonEncoder()];
-        $normalizers          = [new ObjectNormalizer($classMetadataFactory)];
-        $serializer           = new Serializer($normalizers, $encoders);*/
-        $context              = !empty($groups) ? ['groups' => $groups] : null;
-
-        return $this->serializer->normalize($data, JsonEncoder::FORMAT, $context);
+        $context = new SerializationContext();
+        $context->setGroups($groups);
+        return \json_decode($this->serializer->serialize($data, 'json'));
     }
 
 }

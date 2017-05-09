@@ -60,7 +60,10 @@ class DefaultController extends Controller
             'domains'       => $domains,
         ];
 
-        if ($request->getContentType() == 'json') {
+        if (
+            $request->getContentType() == 'json' ||
+            in_array('application/json', $request->getAcceptableContentTypes())
+        ) {
             return new JsonResponse($this->get('app.serializer')->json($variables, ['display']));
         } else {
             return $this->render('default/list.html.twig', ['links' => $variables]);
