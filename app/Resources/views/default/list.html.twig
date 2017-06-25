@@ -1,30 +1,91 @@
 {% extends 'base.html.twig' %}
 
-{% block brand %}Page {{ links.page }} of {{ links.pageCount }} (Total URLs: {{ links.total }}){% endblock %}
+{% block brand %}
+    Page <span data-bind="text: urls.page() + 1"></span>
+    of <span data-bind="text: urls.pageCount"></span>
+    (Total URLs: <span data-bind="text: urls.source().length"></span>)
+{% endblock %}
 
 {% block body %}
     <div id="container" class="container">
         <div class="row">
             <div class="col-sm-3 list-group">
                 <a class="list-group-item" href="{{ path('app_list_urls', {'page': 1}) }}">All Domains</a>
-                {% for domain in links.domains %}
-                    <a data-page="{{ (loop.index / 10)|round(0, 'floor') }}" class="list-group-item" href="{{ path('app_list_urls_by_domain', {'domain': domain.name, 'page': 1}) }}">{{ domain.name }}
-                        <span class="badge">{{ domain.count }}</span></a>
-                {% endfor %}
+                <!-- ko foreach: domains -->
+                <a data-bind="
+                attr: { href: url },
+                click: $parent.loadLinks,
+                css: { active: name == $parent.currentDomain() }"
+                   class="list-group-item">
+                    <span data-bind="text: name"></span>
+                    <span class="badge" data-bind="text: count"></span>
+                </a>
+                <!-- /ko -->
                 <div class="list-group-item">
                     <div class="btn-group">
-                        <a type="button" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-left"></span></a>
-                        <a type="button" class="btn btn-primary"><span class="glyphicon glyphicon-arrow-right"></span></a>
+                        <a type="button"
+                           class="btn btn-primary"
+                           data-bind="
+                           click: domains.previousPage,
+                           enable: domains.hasPreviousPage,
+                           css: {disabled: !domains.hasPreviousPage()}">
+                            <span class="glyphicon glyphicon-arrow-left"></span>
+                        </a>
+                        <a type="button"
+                           class="btn btn-primary"
+                           data-bind="
+                           click: domains.nextPage,
+                           enable: domains.hasNextPage,
+                           css: {disabled: !domains.hasNextPage()}">
+                            <span class="glyphicon glyphicon-arrow-right"></span>
+                        </a>
                     </div>
                 </div>
             </div>
-            <ul class="col-sm-9 list-group">
-                {% for url in links.urls %}
-                    <li class="list-group-item">
-                        <a target="_newtab" href="{{ url.url }}">{{ url.url }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
+            <div class="col-sm-9 list-group">
+                <div class="list-group-item">
+                    <input type="text" class="form-control" data-bind="value: filter, valueUpdate: 'keyup'"/>
+                </div>
+                <!-- ko foreach: urls -->
+                <a class="list-group-item"
+                   target="_newtab"
+                   data-bind="
+                   attr: { href: url },
+                   text: url,
+                   enable: !gone,
+                   css: {disabled: gone}"></a>
+                <!-- /ko -->
+                <div class="list-group-item">
+                    <div class="btn-group">
+                        <a type="button"
+                           class="btn btn-primary"
+                           data-bind="
+                           click: urls.previousPage,
+                           enable: urls.hasPreviousPage,
+                           css: {disabled: !urls.hasPreviousPage()}">
+                            <span class="glyphicon glyphicon-arrow-left"></span>
+                        </a>
+                        <a type="button"
+                           class="btn btn-primary"
+                           data-bind="
+                           click: urls.nextPage,
+                           enable: urls.hasNextPage,
+                           css: {disabled: !urls.hasNextPage()}">
+                            <span class="glyphicon glyphicon-arrow-right"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        let data = {{ jsonData|json_encode|raw }};
+    </script>
+    <script src="{{ asset('js/knockout.min.js') }}"></script>
+    <script src="{{ asset('js/filtered.js') }}"></script>
+    <script src="{{ asset('js/paged.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
 {% endblock %}

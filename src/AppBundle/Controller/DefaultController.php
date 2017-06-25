@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
 {
-    const PAGE_SIZE = 12;
+    const PAGE_SIZE = 2000;
 
     /**
      * @Route("/", name="homepage")
@@ -26,7 +26,7 @@ class DefaultController extends Controller
      *                                 requirements={"domain":
      *                                 "[\w-]+(\.[\w-]+)+|local", "page": "\d+"})
      * @param Request $request
-     * @param int     $page
+     * @param int $page
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
@@ -40,10 +40,10 @@ class DefaultController extends Controller
             $urlManager->getQuery()
                        ->setUser($this->getUser())
                        ->setDomain($domain)
-                       ->setGoneHandling(UrlQuery::NOT_GONE_ONLY);
+                       ->setGoneHandling(UrlQuery::ALL);
 
-        $total     = $urlQuery->count();
-        $pageCount = ceil($total / (double) self::PAGE_SIZE);
+        $total = $urlQuery->count();
+        $pageCount = ceil($total / (double)self::PAGE_SIZE);
 
         $urlQuery->setLimit(self::PAGE_SIZE)
                  ->setOffset(($page - 1) * self::PAGE_SIZE);
@@ -52,21 +52,24 @@ class DefaultController extends Controller
         $variables = [
             'urls'          => $urls,
             'total'         => $total,
-            'page'          => $page,
-            'pageCount'     => $pageCount,
-            'firstPage'     => $page === 1,
-            'lastPage'      => $page === $pageCount,
             'currentDomain' => $domain,
             'domains'       => $domains,
         ];
 
+        $jsonData = $this->get('app.serializer')->json($variables, ['display']);
+
         if (
             $request->getContentType() == 'json' ||
-            in_array('application/json', $request->getAcceptableContentTypes())
+            in_array('application/json', $request->getAcceptableContentTypes()) ||
+            $request->isXmlHttpRequest()
         ) {
             return new JsonResponse($this->get('app.serializer')->json($variables, ['display']));
         } else {
-            return $this->render('default/list.html.twig', ['links' => $variables]);
+            return $this->render(
+                'default/list.html.twig', [
+                                            'jsonData' => $jsonData,
+                                        ]
+            );
         }
     }
 }

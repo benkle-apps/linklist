@@ -60,9 +60,7 @@ class UrlManager
                  ->createQueryBuilder('d')
                  ->select('d.domain')
                  ->addSelect('count(d.id) as c')
-                 ->where(
-                     'd.user = :user'
-                 )
+                 ->where('d.user = :user')
                  ->setParameter('user', $user)
                  ->groupBy('d.domain')
                  ->orderBy('c', 'DESC')
