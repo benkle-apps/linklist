@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Class Url
@@ -11,6 +11,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @package AppBundle\Entity
  * @ORM\Entity()
  * @ORM\Table(name="urls")
+ * @Serializer\ExclusionPolicy("all")
  */
 class Url
 {
@@ -19,42 +20,48 @@ class Url
      * @ORM\Id()
      * @ORM\Column(type="bigint")
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @Groups({"display"})
+     * @Serializer\Groups({"display"})
+     * @Serializer\Expose()
      */
     private $id;
 
     /**
      * @var string
      * @ORM\Column(type="string")
-     * @Groups({"display"})
+     * @Serializer\Groups({"display"})
+     * @Serializer\Expose()
      */
     private $url;
 
     /**
      * @var string
      * @ORM\Column(type="string", nullable=true)
-     * @Groups({"display"})
+     * @Serializer\Groups({"display"})
+     * @Serializer\Expose()
      */
     private $domain;
 
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime")
-     * @Groups({"display"})
+     * @Serializer\Groups({"display"})
+     * @Serializer\Expose()
      */
     private $added;
 
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"display"})
+     * @Serializer\Groups({"display"})
+     * @Serializer\Expose()
      */
     private $visited;
 
     /**
      * @var bool
      * @ORM\Column(type="boolean")
-     * @Groups({"display"})
+     * @Serializer\Groups({"display"})
+     * @Serializer\Expose()
      */
     private $gone = false;
 
