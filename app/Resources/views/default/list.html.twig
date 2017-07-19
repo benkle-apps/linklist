@@ -11,10 +11,13 @@
         <div class="row">
             <div class="col-sm-3 list-group">
                 <a class="list-group-item" href="{{ path('app_list_urls', {'page': 1}) }}">All Domains</a>
+                <div class="list-group-item">
+                    <input type="text" class="form-control" data-bind="value: domainFilter, valueUpdate: 'keyup'"/>
+                </div>
                 <!-- ko foreach: domains -->
                 <a data-bind="
                 attr: { href: url },
-                click: $parent.loadLinks,
+                click: $parent.loadUrls,
                 css: { active: name == $parent.currentDomain() }"
                    class="list-group-item">
                     <span data-bind="text: name"></span>
@@ -44,7 +47,7 @@
             </div>
             <div class="col-sm-9 list-group">
                 <div class="list-group-item">
-                    <input type="text" class="form-control" data-bind="value: filter, valueUpdate: 'keyup'"/>
+                    <input type="text" class="form-control" data-bind="value: urlFilter, valueUpdate: 'keyup'"/>
                 </div>
                 <!-- ko foreach: urls -->
                 <a class="list-group-item"
@@ -52,8 +55,8 @@
                    data-bind="
                    attr: { href: url },
                    text: url,
-                   enable: !gone,
-                   css: {disabled: gone}"></a>
+                   click: $parent.visitUrl,
+                   css: {disabled: gone, hidden: deleted}"></a>
                 <!-- /ko -->
                 <div class="list-group-item">
                     <div class="btn-group">

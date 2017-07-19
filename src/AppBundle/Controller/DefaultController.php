@@ -72,4 +72,25 @@ class DefaultController extends Controller
             );
         }
     }
+
+    /**
+     * @Route("/delete/{id}", name="app_delete_url", requirements={"id": "\d+"})
+     *
+     * @param Request $request
+     * @param int $id
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function deleteUrlAction(Request $request, $id)
+    {
+        $urlManager = $this->get('app.url_manager');
+
+        if ($url = $urlManager->getUrl($this->getUser(), $id)) {
+            $url->setDeleted(true);
+            $urlManager->storeUrl($url);
+            return new JsonResponse([], 200);
+        } else {
+            return new JsonResponse([], 404);
+        }
+    }
 }

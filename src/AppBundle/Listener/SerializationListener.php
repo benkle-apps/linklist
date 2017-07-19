@@ -29,6 +29,7 @@ namespace AppBundle\Listener;
 
 
 use AppBundle\Entity\Domain;
+use AppBundle\Entity\Url;
 use JMS\Serializer\EventDispatcher\Events;
 use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
 use JMS\Serializer\EventDispatcher\ObjectEvent;
@@ -66,6 +67,7 @@ class SerializationListener implements EventSubscriberInterface
     {
         return [
             ['event' => Events::POST_SERIALIZE, 'class' => Domain::class, 'method' => 'serializeDomain'],
+            ['event' => Events::POST_SERIALIZE, 'class' => Url::class, 'method' => 'serializeUrl'],
         ];
     }
 
@@ -77,9 +79,9 @@ class SerializationListener implements EventSubscriberInterface
             'url',
             $this->getRouter()->generate(
                 'app_list_urls_by_domain', [
-                'domain' => $domain->getName(),
-                'page'   => 1,
-            ]
+                                             'domain' => $domain->getName(),
+                                             'page'   => 1,
+                                         ]
             )
         );
     }
@@ -90,5 +92,15 @@ class SerializationListener implements EventSubscriberInterface
     public function getRouter()
     {
         return $this->router;
+    }
+
+    public function serializeUrl(ObjectEvent $event)
+    {
+        /** @var Url $url */
+        $url = $event->getObject();
+        $event->getVisitor()->addData(
+            'deleteAction',
+            $this->getRouter()->generate('app_delete_url', ['id' => $url->getId(),])
+        );
     }
 }

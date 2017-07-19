@@ -156,4 +156,14 @@ class UrlManager
         return new UrlQuery($this->getReposity());
     }
 
+    /**
+     * @param UserInterface $user
+     * @param $id
+     * @return Url|null|object
+     */
+    public function getUrl(UserInterface $user, $id)
+    {
+        return $this->getReposity()->findOneBy(['id' => $id, 'user' => $user]);
+    }
+
 }

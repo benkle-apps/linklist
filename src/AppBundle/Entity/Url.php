@@ -10,7 +10,13 @@ use JMS\Serializer\Annotation as Serializer;
  *
  * @package AppBundle\Entity
  * @ORM\Entity()
- * @ORM\Table(name="urls")
+ * @ORM\Table(
+ *     name="urls",
+ *     indexes={
+ *         @ORM\Index(name="domain_idx", columns={"domain", "user_id", "gone", "deleted"}),
+ *         @ORM\Index(name="user_id_idx", columns={"id", "user_id"})
+ *     }
+ * )
  * @Serializer\ExclusionPolicy("all")
  */
 class Url
@@ -64,6 +70,14 @@ class Url
      * @Serializer\Expose()
      */
     private $gone = false;
+
+    /**
+     * @var bool
+     * @ORM\Column(type="boolean")
+     * @Serializer\Groups({"display"})
+     * @Serializer\Expose()
+     */
+    private $deleted = false;
 
     /**
      * @var User
@@ -182,5 +196,23 @@ class Url
     public function getAdded()
     {
         return $this->added;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        return $this->deleted;
+    }
+
+    /**
+     * @param bool $deleted
+     * @return $this
+     */
+    public function setDeleted($deleted)
+    {
+        $this->deleted = $deleted;
+        return $this;
     }
 }
