@@ -223,9 +223,10 @@ class UrlQuery
     /**
      * Create and fill query builder.
      *
+     * @param bool $whereOnly
      * @return \Doctrine\ORM\QueryBuilder
      */
-    private function createQueryBuilder()
+    private function createQueryBuilder($whereOnly = false)
     {
         $builder = $this->repository->createQueryBuilder('d');
         if (isset($this->user)) {
@@ -256,23 +257,26 @@ class UrlQuery
                 break;
         }
 
-        if ($this->limit > 0) {
-            $builder->setMaxResults($this->limit);
-        }
+        if (!$whereOnly) {
 
-        if ($this->offset > 0) {
-            $builder->setFirstResult($this->offset);
-        }
+            if ($this->limit > 0) {
+                $builder->setMaxResults($this->limit);
+            }
 
-        $orderDirection = $this->orderDirection == GetUrlsOptions::ORDER_UP ? 'ASC' : 'DESC';
+            if ($this->offset > 0) {
+                $builder->setFirstResult($this->offset);
+            }
 
-        switch ($this->orderBy) {
-            case self::ORDER_BY_ADDED:
-                $builder->orderBy('d.added', $orderDirection);
-                break;
-            case self::ORDER_BY_VISITED:
-                $builder->orderBy('d.visited', $orderDirection);
-                break;
+            $orderDirection = $this->orderDirection == GetUrlsOptions::ORDER_UP ? 'ASC' : 'DESC';
+
+            switch ($this->orderBy) {
+                case self::ORDER_BY_ADDED:
+                    $builder->orderBy('d.added', $orderDirection);
+                    break;
+                case self::ORDER_BY_VISITED:
+                    $builder->orderBy('d.visited', $orderDirection);
+                    break;
+            }
         }
 
         return $builder;
@@ -284,7 +288,7 @@ class UrlQuery
     public function count()
     {
         $result =
-            $this->createQueryBuilder()
+            $this->createQueryBuilder(true)
                  ->select('count(d.id)')
                  ->getQuery()
                  ->getScalarResult();
