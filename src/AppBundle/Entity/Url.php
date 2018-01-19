@@ -33,7 +33,7 @@ class Url
 
     /**
      * @var string
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="text")
      * @Serializer\Groups({"display"})
      * @Serializer\Expose()
      */
