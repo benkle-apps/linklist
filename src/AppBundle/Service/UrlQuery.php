@@ -257,6 +257,8 @@ class UrlQuery
                 break;
         }
 
+        $builder->andWhere('d.deleted = false');
+
         if (!$whereOnly) {
 
             if ($this->limit > 0) {

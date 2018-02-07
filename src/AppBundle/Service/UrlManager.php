@@ -61,6 +61,7 @@ class UrlManager
                  ->select('d.domain')
                  ->addSelect('count(d.id) as c')
                  ->where('d.user = :user')
+                 ->andWhere('d.deleted = false')
                  ->setParameter('user', $user)
                  ->groupBy('d.domain')
                  ->orderBy('c', 'DESC')
