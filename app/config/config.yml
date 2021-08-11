@@ -70,6 +70,9 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: AppBundle\Entity\User
+    from_email:
+        address: "%admin_email%"
+        sender_name: "%admin_name%"
 
 m6web_guzzlehttp:
     clients:
