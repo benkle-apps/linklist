@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\User;
 use AppBundle\Service\UrlQuery;
+use http\Header;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -92,5 +94,34 @@ class DefaultController extends Controller
         } else {
             return new JsonResponse([], 404);
         }
+    }
+
+    /**
+     * @Route("/api/url/add", name="app_api_url_add", methods={"POST"})
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function apiUrlAddAction(Request $request)
+    {
+        $key = $request->headers->get('Authorization');
+        if (null === $key) {
+            return new JsonResponse([], 403);
+        }
+        $key = trim(str_ireplace('bearer', '', $key));
+        $user = $this
+            ->getDoctrine()
+            ->getManager()
+            ->getRepository(User::class)
+            ->findOneBy(['key' => $key]);
+        if (null === $user) {
+            return new JsonResponse([], 403);
+        }
+        $urlManager = $this->get('app.url_manager');
+        $urls = explode("\n", $request->getContent());
+        foreach ($urls as $url) {
+            $urlManager->addUrl($user, $url);
+        }
+        return new JsonResponse([], 200);
     }
 }

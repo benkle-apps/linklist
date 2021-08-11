@@ -56,7 +56,7 @@ class UrlManager
     public function getDomains(UserInterface $user)
     {
         $q =
-            $this->getReposity()
+            $this->getRepository()
                  ->createQueryBuilder('d')
                  ->select('d.domain')
                  ->addSelect('count(d.id) as c')
@@ -74,7 +74,7 @@ class UrlManager
         return $result;
     }
 
-    private function getReposity()
+    private function getRepository()
     {
         return $this->manager->getRepository('AppBundle:Url');
     }
@@ -105,7 +105,7 @@ class UrlManager
      */
     public function getUrls(User $user, GetUrlsOptions $options)
     {
-        $query = new UrlQuery($this->getReposity());
+        $query = new UrlQuery($this->getRepository());
         $query->setUser($user->getId() !== null ? $user : null)
               ->setDomain($options->domain)
               ->setVisitedHandling($options->visited)
@@ -126,7 +126,7 @@ class UrlManager
      */
     public function countUrls(UserInterface $user, GetUrlsOptions $options)
     {
-        $query = new UrlQuery($this->getReposity());
+        $query = new UrlQuery($this->getRepository());
         $query->setUser($user->getId() !== null ? $user : null)
               ->setDomain($options->domain)
               ->setVisitedHandling($options->visited)
@@ -154,7 +154,7 @@ class UrlManager
 
     public function getQuery()
     {
-        return new UrlQuery($this->getReposity());
+        return new UrlQuery($this->getRepository());
     }
 
     /**
@@ -164,7 +164,7 @@ class UrlManager
      */
     public function getUrl(UserInterface $user, $id)
     {
-        return $this->getReposity()->findOneBy(['id' => $id, 'user' => $user]);
+        return $this->getRepository()->findOneBy(['id' => $id, 'user' => $user]);
     }
 
 }

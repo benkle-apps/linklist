@@ -18,3 +18,9 @@ services:
     arguments: ['@router']
     tags:
       - {name: jms_serializer.event_subscriber}
+
+  app.listener.user.create:
+    class: AppBundle\Listener\CreateUserListener
+    arguments: ['@fos_user.object_manager']
+    tags:
+      - {name: kernel.event_listener, event: fos_user.user.created}
